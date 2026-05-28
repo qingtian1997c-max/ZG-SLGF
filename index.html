@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>????????</title>
+<style>
+  :root {
+    --bg: #f0f4f8;
+    --card-bg: #ffffff;
+    --primary: #1a73e8;
+    --primary-light: #e8f0fe;
+    --text: #202124;
+    --text-secondary: #5f6368;
+    --border: #e0e4e8;
+    --tag-bg: #e8eaed;
+    --tag-active: #1a73e8;
+    --tag-active-text: #ffffff;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-hover: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Header */
+  header {
+    background: linear-gradient(135deg, #1a56db 0%, #1a73e8 100%);
+    color: #fff;
+    padding: 32px 24px;
+    text-align: center;
+  }
+  header h1 { font-size: 28px; font-weight: 600; margin-bottom: 6px; }
+  header p { font-size: 14px; opacity: 0.85; }
+
+  /* Container */
+  .container { max-width: 960px; margin: 0 auto; padding: 24px 20px; }
+
+  /* Search */
+  .search-wrap {
+    position: relative;
+    margin-bottom: 20px;
+  }
+  .search-wrap input {
+    width: 100%;
+    padding: 14px 20px 14px 52px;
+    font-size: 16px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    background: var(--card-bg);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: var(--shadow);
+  }
+  .search-wrap input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(26,115,232,0.15);
+  }
+  .search-wrap .icon {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: var(--text-secondary);
+    pointer-events: none;
+  }
+
+  /* Stats */
+  .stats {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Category Tags */
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  .tag {
+    padding: 7px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    color: var(--text-secondary);
+    transition: all 0.2s;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .tag:hover { border-color: var(--primary); color: var(--primary); }
+  .tag.active { background: var(--tag-active); color: var(--tag-active-text); border-color: var(--tag-active); }
+  .tag .count { font-size: 11px; margin-left: 2px; opacity: 0.7; }
+
+  /* Spec Cards */
+  .card-list { display: flex; flex-direction: column; gap: 12px; }
+  .card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px 24px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    transition: box-shadow 0.2s, transform 0.15s;
+    cursor: pointer;
+  }
+  .card:hover { box-shadow: var(--shadow-hover); transform: translateY(-1px); }
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .card-code {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--primary);
+    white-space: nowrap;
+  }
+  .card-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    flex: 1;
+  }
+  .card-cat {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    background: var(--primary-light);
+    color: var(--primary);
+    white-space: nowrap;
+  }
+  .card-date {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 8px;
+  }
+
+  /* Card Actions (expandable) */
+  .card-actions {
+    display: none;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .card.expanded .card-actions { display: flex; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    color: var(--text);
+    transition: all 0.15s;
+  }
+  .btn:hover { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
+  .btn.primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .btn.primary:hover { background: #1557b0; }
+  .btn:disabled { opacity: 0.4; pointer-events: none; }
+
+  /* Expand hint */
+  .expand-hint {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 6px;
+  }
+
+  /* No results */
+  .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-secondary);
+  }
+  .empty .emoji { font-size: 48px; margin-bottom: 12px; }
+  .empty p { font-size: 15px; }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 32px 20px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    header h1 { font-size: 22px; }
+    .card-header { flex-direction: column; gap: 4px; }
+    .card-code { font-size: 14px; }
+    .card-name { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>?? ????????</h1>
+  <p>?????????????????? ? ? 24 ?????</p>
+</header>
+
+<div class="container">
+  <!-- Search -->
+  <div class="search-wrap">
+    <span class="icon">??</span>
+    <input type="text" id="search" placeholder="????????????????????????..." autocomplete="off">
+  </div>
+
+  <div class="stats">
+    <span id="result-count">? 24 ???</span>
+    <span style="cursor:pointer;color:var(--primary)" onclick="clearAll()">? ????</span>
+  </div>
+
+  <!-- Category Tags -->
+  <div class="tags" id="tags"></div>
+
+  <!-- Cards -->
+  <div class="card-list" id="card-list"></div>
+
+  <div class="empty" id="empty" style="display:none">
+    <div class="emoji">??</div>
+    <p>?????????????????</p>
+  </div>
+</div>
+
+<footer>
+  <p>???????????? ? ?????? 2026.05</p>
+</footer>
+
+<script>
+const specs = [{"id": 1, "code": "SLT 197-2026", "name": "??????????", "date": "2026.04.07", "cat": "????", "file": "", "size": ""}, {"id": 2, "code": "SLT 290-2024", "name": "????????????????????", "date": "2025.03.31", "cat": "????", "file": "", "size": ""}, {"id": 3, "code": "SLT 386-2025", "name": "????????????????", "date": "2026.02.05", "cat": "????", "file": "", "size": ""}, {"id": 4, "code": "SLT 447-2026", "name": "??????????????????", "date": "2026.04.04", "cat": "????", "file": "", "size": ""}, {"id": 5, "code": "SLT 504-2026", "name": "??????????????????", "date": "2026.05.11", "cat": "?????", "file": "", "size": ""}, {"id": 6, "code": "SL/T 530-2026", "name": "????????????????????????", "date": "2026.04.07", "cat": "????", "file": "", "size": ""}, {"id": 7, "code": "SLT 612-2026", "name": "?????????????", "date": "2026.04.07", "cat": "????", "file": "", "size": ""}, {"id": 8, "code": "SLT 631.5-2025", "name": "?????????????????? ?5?? ??????????", "date": "2026.02.05", "cat": "????", "file": "", "size": ""}, {"id": 9, "code": "SLT 631.6-2025", "name": "?????????????????? ?6?? ?????????????????", "date": "2026.02.05", "cat": "????", "file": "", "size": ""}, {"id": 10, "code": "SLT 631.7-2025", "name": "?????????????????? ?7?? ????????", "date": "2026.02.05", "cat": "????", "file": "", "size": ""}, {"id": 11, "code": "SLT 654-2026", "name": "????????????????????", "date": "2026.04.04", "cat": "????", "file": "", "size": ""}, {"id": 12, "code": "SLT 706-2026", "name": "??????????", "date": "2026.05.11", "cat": "????", "file": "", "size": ""}, {"id": 13, "code": "SLT 851-2025", "name": "??????????", "date": "2026.02.05", "cat": "????", "file": "", "size": ""}, {"id": 14, "code": "SLT 860-2026", "name": "???????????", "date": "2026.04.04", "cat": "????", "file": "", "size": ""}, {"id": 15, "code": "SLT 861-2026", "name": "???????????????", "date": "2026.04.04", "cat": "????", "file": "", "size": ""}, {"id": 16, "code": "SLT 862-2026", "name": "?????????????", "date": "2026.04.04", "cat": "????", "file": "", "size": ""}, {"id": 17, "code": "SLT 863-2026", "name": "???????????????????", "date": "2026.04.04", "cat": "????", "file": "", "size": ""}, {"id": 18, "code": "SLT 864-2026", "name": "??????????", "date": "2026.04.04", "cat": "????", "file": "", "size": ""}, {"id": 19, "code": "SLT 865-2026", "name": "??????????????", "date": "2026.04.04", "cat": "????", "file": "", "size": ""}, {"id": 20, "code": "SLT 866-2026", "name": "?????????", "date": "2026.05.11", "cat": "???", "file": "", "size": ""}, {"id": 21, "code": "SLT 867-2026", "name": "?????????", "date": "2026.05.11", "cat": "???", "file": "", "size": ""}, {"id": 22, "code": "SLT 868-2026", "name": "???????????????", "date": "2026.05.11", "cat": "????", "file": "", "size": ""}, {"id": 23, "code": "SLT 869-2026", "name": "???????????????", "date": "2026.05.11", "cat": "??", "file": "", "size": ""}, {"id": 24, "code": "SLT 870-2026", "name": "???????????", "date": "2026.05.11", "cat": "???", "file": "", "size": ""}];
+const categories = ["????", "?????", "???", "??"];
+
+let activeCat = null;
+let query = '';
+
+function renderTags() {
+  const tagsEl = document.getElementById('tags');
+  let html = '<span class="tag' + (activeCat === null ? ' active' : '') + '" onclick="filterByCat(null)">??<span class="count">24</span></span>';
+  categories.forEach(cat => {
+    const count = specs.filter(s => s.cat === cat).length;
+    html += '<span class="tag' + (activeCat === cat ? ' active' : '') + '" onclick="filterByCat(\'' + cat.replace(/'/g, "\'") + '\')">' + cat + '<span class="count"> ' + count + '</span></span>';
+  });
+  tagsEl.innerHTML = html;
+}
+
+function filterByCat(cat) {
+  activeCat = cat;
+  query = document.getElementById('search').value.trim().toLowerCase();
+  renderTags();
+  renderCards();
+}
+
+function renderCards() {
+  const listEl = document.getElementById('card-list');
+  const emptyEl = document.getElementById('empty');
+  const countEl = document.getElementById('result-count');
+
+  let filtered = specs;
+  if (activeCat !== null) {
+    filtered = filtered.filter(s => s.cat === activeCat);
+  }
+  if (query) {
+    filtered = filtered.filter(s => s.code.toLowerCase().includes(query) || s.name.includes(query));
+  }
+
+  countEl.textContent = filtered.length === specs.length ? '? ' + specs.length + ' ???' : '?? ' + filtered.length + ' ???';
+
+  if (filtered.length === 0) {
+    listEl.innerHTML = '';
+    emptyEl.style.display = 'block';
+    return;
+  }
+
+  emptyEl.style.display = 'none';
+
+  let html = '';
+  filtered.forEach(s => {
+    html += '<div class="card" id="card-' + s.id + '" onclick="toggleCard(' + s.id + ')">';
+    html += '<div class="card-header">';
+    html += '<span class="card-code">' + s.code + '</span>';
+    html += '<span class="card-name">' + s.name + '</span>';
+    html += '<span class="card-cat">' + s.cat + '</span>';
+    html += '</div>';
+    html += '<div class="card-date">?? ?????' + s.date + '</div>';
+    html += '<div class="card-actions">';
+    if (s.file) {
+      html += '<a class="btn primary" href="' + s.file + '" target="_blank" onclick="event.stopPropagation()">??? ????</a>';
+      html += '<a class="btn" href="' + s.file + '" download onclick="event.stopPropagation()">?? ?? PDF</a>';
+    } else {
+      html += '<span class="btn" disabled title="PDF ????">??? ??????????</span>';
+      html += '<span class="btn" disabled title="PDF ????">?? ????????</span>';
+    }
+    html += '</div>';
+    html += '<div class="expand-hint">?? ????????</div>';
+    html += '</div>';
+  });
+  listEl.innerHTML = html;
+}
+
+function toggleCard(id) {
+  const card = document.getElementById('card-' + id);
+  card.classList.toggle('expanded');
+}
+
+function clearAll() {
+  activeCat = null;
+  document.getElementById('search').value = '';
+  query = '';
+  renderTags();
+  renderCards();
+}
+
+// Init
+document.getElementById('search').addEventListener('input', function(e) {
+  query = e.target.value.trim().toLowerCase();
+  renderCards();
+});
+
+renderTags();
+renderCards();
+</script>
+
+</body>
+</html>
