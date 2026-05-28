@@ -1,4 +1,88 @@
-<!DOCTYPE html>
+﻿import json, openpyxl
+
+wb = openpyxl.load_workbook("specs.xlsx", data_only=True)
+ws = wb.active
+specs = []
+cats_order = []
+
+# Map Excel spec code to PDF filename
+code_to_file = {
+    "SLT 197-2026": "SLT-197-2026.pdf",
+    "SLT 290-2024": "SLT-290-2024.pdf",
+    "SLT 386-2025": "SLT-386-2025.pdf",
+    "SLT 447-2026": "SLT-447-2026.pdf",
+    "SLT 504-2026": "SLT-504-2026.pdf",
+    "SL/T 530-2026": "SLT-530-2026.pdf",
+    "SLT 612-2026": "SLT-612-2026.pdf",
+    "SLT 631.5-2025": "SLT-631.5-2025.pdf",
+    "SLT 631.6-2025": "SLT-631.6-2025.pdf",
+    "SLT 631.7-2025": "SLT-631.7-2025.pdf",
+    "SLT 654-2026": "SLT-654-2026.pdf",
+    "SLT 706-2026": "SLT-706-2026.pdf",
+    "SLT 851-2025": "SLT-851-2025.pdf",
+    "SLT 860-2026": "SLT-860-2026.pdf",
+    "SLT 861-2026": "SLT-861-2026.pdf",
+    "SLT 862-2026": "SLT-862-2026.pdf",
+    "SLT 863-2026": "SLT-863-2026.pdf",
+    "SLT 864-2026": "SLT-864-2026.pdf",
+    "SLT 865-2026": "SLT-865-2026.pdf",
+    "SLT 866-2026": "SLT-866-2026.pdf",
+    "SLT 867-2026": "SLT-867-2026.pdf",
+    "SLT 868-2026": "SLT-868-2026.pdf",
+    "SLT 869-2026": "SLT-869-2026.pdf",
+    "SLT 870-2026": "SLT-870-2026.pdf",
+}
+
+# Which files are already in the repo (generates raw link)
+# SLT 290-2024 is >100MB, needs GitHub Release
+needs_release = {"SLT 290-2024"}
+
+BASE_RAW = "https://slgf-pdf.qingtian1997c.workers.dev/"
+BASE_RELEASE = "https://github.com/qingtian1997c-max/ZG-SLGF/releases/download/v1.0/"
+
+for row in ws.iter_rows(min_row=2, max_row=ws.max_row, values_only=True):
+    seq, code, name, date = row
+    code = str(code).strip().replace("  ", " ")
+    name = str(name).strip().replace("  ", " ")
+    date_str = str(date).strip()
+    
+    n = name
+    if "测量" in n: cat = "勘测测量"
+    elif "规划" in n or "设计" in n or "边坡" in n or "使用年限" in n: cat = "规划设计"
+    elif "水土保持" in n: cat = "水土保持"
+    elif "水文" in n: cat = "水文水资源"
+    elif "施工质量" in n or "质量管理" in n or "金属结构" in n or "发电机组" in n or "电气装置" in n: cat = "施工质量"
+    elif "安全监测" in n: cat = "安全监测"
+    elif "自动化" in n or "无人机" in n or "激光雷达" in n or "数字孪生" in n or "数据分类" in n or "可视化" in n or "模型集成" in n: cat = "数字水利"
+    elif "水库调度" in n or "调水工程" in n or "调度管理" in n: cat = "水库调度"
+    elif "用水权" in n: cat = "用水权"
+    elif "水下" in n or "修复" in n: cat = "维护修复"
+    elif "灌溉" in n: cat = "灌溉"
+    elif "小水电" in n: cat = "小水电"
+    elif "移民" in n: cat = "规划设计"
+    else: cat = "其他"
+    
+    if cat not in cats_order:
+        cats_order.append(cat)
+    
+    filename = code_to_file.get(code, "")
+    if filename:
+        if code in needs_release:
+            file_url = BASE_RELEASE + filename
+        else:
+            file_url = BASE_RAW + filename
+    else:
+        file_url = ""
+    
+    specs.append({
+        "id": seq, "code": code, "name": name,
+        "date": date_str, "cat": cat, "file": file_url, "size": ""
+    })
+
+specs_json = json.dumps(specs, ensure_ascii=False)
+cats_json = json.dumps(cats_order, ensure_ascii=False)
+
+html = """<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -90,7 +174,7 @@
 <body>
 <header>
   <h1>水利规范文件检索</h1>
-  <p>涵盖勘测、设计、施工、数字水利等领域 · 共 24 部现行规范</p>
+  <p>涵盖勘测、设计、施工、数字水利等领域 \u00b7 共 """ + str(len(specs)) + """ 部现行规范</p>
 </header>
 <div class="container">
   <div class="search-wrap">
@@ -98,7 +182,7 @@
     <input type="text" id="search" placeholder="输入关键词搜索规范，如：测量、质量验收、数字孪生..." autocomplete="off">
   </div>
   <div class="stats">
-    <span id="result-count">共 24 部规范</span>
+    <span id="result-count">共 """ + str(len(specs)) + """ 部规范</span>
     <span style="cursor:pointer;color:var(--primary)" onclick="clearAll()">清除筛选</span>
   </div>
   <div class="tags" id="tags"></div>
@@ -109,11 +193,11 @@
   </div>
 </div>
 <footer>
-  <p>点击规范卡片展开查看详情 · 数据更新时间 2026.05</p>
+  <p>点击规范卡片展开查看详情 \u00b7 数据更新时间 2026.05</p>
 </footer>
 <script>
-const specs = [{"id": 1, "code": "SLT 197-2026", "name": "水利水电工程测量规范", "date": "2026.4.7", "cat": "勘测测量", "file": "https://slgf-pdf.qingtian1997c.workers.dev/SLT-197-2026.pdf", "size": ""}, {"id": 2, "code": "SLT 290-2024", "name": "水利水电工程建设征地移民安置规划设计规范", "date": "2025.3.31", "cat": "规划设计", "file": "https://github.com/qingtian1997c-max/ZG-SLGF/releases/download/v1.0/SLT-290-2024.pdf", "size": ""}, {"id": 3, "code": "SLT 386-2025", "name": "水利水电工程边坡与挡土墙设计规范", "date": "2026.2.5", "cat": "规划设计", "file": "https://slgf-pdf.qingtian1997c.workers.dev/SLT-386-2025.pdf", "size": ""}, {"id": 4, "code": "SLT 447-2026", "name": "水土保持项目前期设计文件编制技术规程", "date": "2026.4.4", "cat": "规划设计", "file": "https://slgf-pdf.qingtian1997c.workers.dev/SLT-447-2026.pdf", "size": ""}, {"id": 5, "code": "SLT 504-2026", "name": "水文设施工程前期工作技术报告编制规程", "date": "2026.05.11", "cat": "水文水资源", "file": "https://slgf-pdf.qingtian1997c.workers.dev/SLT-504-2026.pdf", "size": ""}, {"id": 6, "code": "SL/T 530-2026", "name": "水利水电工程安全监测仪器检验与安装规范(扫描版)", "date": "2026.4.7", "cat": "安全监测", "file": "https://slgf-pdf.qingtian1997c.workers.dev/SLT-530-2026.pdf", "size": ""}, {"id": 7, "code": "SLT 612-2026", "name": "水利水电工程自动化设计规范", "date": "2026.4.7", "cat": "规划设计", "file": "https://slgf-pdf.qingtian1997c.workers.dev/SLT-612-2026.pdf", "size": ""}, {"id": 8, "code": "SLT 631.5-2025", "name": "水利水电工程单元工程施工质量验收标准 第5部分 水工金属结构安装工程", "date": "2026.2.5", "cat": "施工质量", "file": "https://slgf-pdf.qingtian1997c.workers.dev/SLT-631.5-2025.pdf", "size": ""}, {"id": 9, "code": "SLT 631.6-2025", "name": "水利水电工程单元工程施工质量验收标准 第6部分 水轮发电机组及辅助设备系统安装工程", "date": "2026.2.5", "cat": "施工质量", "file": "https://slgf-pdf.qingtian1997c.workers.dev/SLT-631.6-2025.pdf", "size": ""}, {"id": 10, "code": "SLT 631.7-2025", "name": "水利水电工程单元工程施工质量验收标准 第7部分电气装置安装工程", "date": "2026.2.5", "cat": "施工质量", "file": "https://slgf-pdf.qingtian1997c.workers.dev/SLT-631.7-2025.pdf", "size": ""}, {"id": 11, "code": "SLT 654-2026", "name": "水利水电工程合理使用年限及耐久性设计规范", "date": "2026.4.4", "cat": "规划设计", "file": "https://slgf-pdf.qingtian1997c.workers.dev/SLT-654-2026.pdf", "size": ""}, {"id": 12, "code": "SLT 706-2026", "name": "水库调度规程编制导则", "date": "2026.05.11", "cat": "水库调度", "file": "https://slgf-pdf.qingtian1997c.workers.dev/SLT-706-2026.pdf", "size": ""}, {"id": 13, "code": "SLT 851-2025", "name": "调水工程调度管理规程", "date": "2026.2.5", "cat": "水库调度", "file": "https://slgf-pdf.qingtian1997c.workers.dev/SLT-851-2025.pdf", "size": ""}, {"id": 14, "code": "SLT 860-2026", "name": "水利无人机监测技术规范", "date": "2026.4.4", "cat": "数字水利", "file": "https://slgf-pdf.qingtian1997c.workers.dev/SLT-860-2026.pdf", "size": ""}, {"id": 15, "code": "SLT 861-2026", "name": "流域下垫面激光雷达测量技术规范", "date": "2026.4.4", "cat": "勘测测量", "file": "https://slgf-pdf.qingtian1997c.workers.dev/SLT-861-2026.pdf", "size": ""}, {"id": 16, "code": "SLT 862-2026", "name": "数字孪生水利可视化表达规范", "date": "2026.4.4", "cat": "数字水利", "file": "https://slgf-pdf.qingtian1997c.workers.dev/SLT-862-2026.pdf", "size": ""}, {"id": 17, "code": "SLT 863-2026", "name": "数字孪生水利专业模型集成与服务技术要求", "date": "2026.4.4", "cat": "数字水利", "file": "https://slgf-pdf.qingtian1997c.workers.dev/SLT-863-2026.pdf", "size": ""}, {"id": 18, "code": "SLT 864-2026", "name": "水利数据分类分级规则", "date": "2026.4.4", "cat": "数字水利", "file": "https://slgf-pdf.qingtian1997c.workers.dev/SLT-864-2026.pdf", "size": ""}, {"id": 19, "code": "SLT 865-2026", "name": "水利工程建设项目质量管理规范", "date": "2026.4.4", "cat": "施工质量", "file": "https://slgf-pdf.qingtian1997c.workers.dev/SLT-865-2026.pdf", "size": ""}, {"id": 20, "code": "SLT 866-2026", "name": "用水权交易技术标准", "date": "2026.05.11", "cat": "用水权", "file": "https://slgf-pdf.qingtian1997c.workers.dev/SLT-866-2026.pdf", "size": ""}, {"id": 21, "code": "SLT 867-2026", "name": "用水权交易数据规范", "date": "2026.05.11", "cat": "用水权", "file": "https://slgf-pdf.qingtian1997c.workers.dev/SLT-867-2026.pdf", "size": ""}, {"id": 22, "code": "SLT 868-2026", "name": "水工建筑物水下缺陷修复技术导则", "date": "2026.05.11", "cat": "维护修复", "file": "https://slgf-pdf.qingtian1997c.workers.dev/SLT-868-2026.pdf", "size": ""}, {"id": 23, "code": "SLT 869-2026", "name": "农业灌溉用水计量监测与评价导则", "date": "2026.05.11", "cat": "灌溉", "file": "https://slgf-pdf.qingtian1997c.workers.dev/SLT-869-2026.pdf", "size": ""}, {"id": 24, "code": "SLT 870-2026", "name": "小水电集控中心技术规范", "date": "2026.05.11", "cat": "小水电", "file": "https://slgf-pdf.qingtian1997c.workers.dev/SLT-870-2026.pdf", "size": ""}];
-const categories = ["勘测测量", "规划设计", "水文水资源", "安全监测", "施工质量", "水库调度", "数字水利", "用水权", "维护修复", "灌溉", "小水电"];
+const specs = """ + specs_json + """;
+const categories = """ + cats_json + """;
 let activeCat = null;
 let query = '';
 function renderTags() {
@@ -121,7 +205,7 @@ function renderTags() {
   let html = '<span class="tag' + (activeCat === null ? ' active' : '') + '" onclick="filterByCat(null)">全部<span class="count">' + specs.length + '</span></span>';
   categories.forEach(cat => {
     const count = specs.filter(s => s.cat === cat).length;
-    html += '<span class="tag' + (activeCat === cat ? ' active' : '') + '" onclick="filterByCat("' + cat + '")">' + cat + '<span class="count"> ' + count + '</span></span>';
+    html += '<span class="tag' + (activeCat === cat ? ' active' : '') + '" onclick="filterByCat(\"' + cat + '\")">' + cat + '<span class="count"> ' + count + '</span></span>';
   });
   tagsEl.innerHTML = html;
 }
@@ -138,7 +222,7 @@ function renderCards() {
   let filtered = specs;
   if (activeCat !== null) { filtered = filtered.filter(s => s.cat === activeCat); }
   if (query) { filtered = filtered.filter(s => s.code.toLowerCase().includes(query) || s.name.includes(query)); }
-  countEl.textContent = filtered.length === specs.length ? '共 ' + specs.length + ' 部规范' : '找到 ' + filtered.length + ' 部规范';
+  countEl.textContent = filtered.length === specs.length ? '\u5171 ' + specs.length + ' \u90e8\u89c4\u8303' : '\u627e\u5230 ' + filtered.length + ' \u90e8\u89c4\u8303';
   if (filtered.length === 0) { listEl.innerHTML = ''; emptyEl.style.display = 'block'; return; }
   emptyEl.style.display = 'none';
   let html = '';
@@ -149,17 +233,17 @@ function renderCards() {
     html += '<span class="card-name">' + s.name + '</span>';
     html += '<span class="card-cat">' + s.cat + '</span>';
     html += '</div>';
-    html += '<div class="card-date">实施时间：' + s.date + '</div>';
+    html += '<div class="card-date">\u5b9e\u65bd\u65f6\u95f4\uff1a' + s.date + '</div>';
     html += '<div class="card-actions">';
     if (s.file) {
-      html += '<a class="btn primary" href="viewer.html?file=' + encodeURIComponent(s.file) + '" target="_blank" onclick="event.stopPropagation()">在线浏览</a>';
-      html += '<a class="btn" href="viewer.html?file=' + encodeURIComponent(s.file) + '" download onclick="event.stopPropagation()">下载 PDF</a>';
+      html += '<a class="btn primary" href="viewer.html?file=' + encodeURIComponent(s.file) + '" target="_blank" onclick="event.stopPropagation()">\u5728\u7ebf\u6d4f\u89c8</a>';
+      html += '<a class="btn" href="viewer.html?file=' + encodeURIComponent(s.file) + '" download onclick="event.stopPropagation()">\u4e0b\u8f7d PDF</a>';
     } else {
-      html += '<span class="btn" disabled title="PDF 暂未上传">在线浏览（暂未上传）</span>';
-      html += '<span class="btn" disabled title="PDF 暂未上传">下载（暂未上传）</span>';
+      html += '<span class="btn" disabled title="PDF \u6682\u672a\u4e0a\u4f20">\u5728\u7ebf\u6d4f\u89c8\uff08\u6682\u672a\u4e0a\u4f20\uff09</span>';
+      html += '<span class="btn" disabled title="PDF \u6682\u672a\u4e0a\u4f20">\u4e0b\u8f7d\uff08\u6682\u672a\u4e0a\u4f20\uff09</span>';
     }
     html += '</div>';
-    html += '<div class="expand-hint">点击展开查看详情</div>';
+    html += '<div class="expand-hint">\u70b9\u51fb\u5c55\u5f00\u67e5\u770b\u8be6\u60c5</div>';
     html += '</div>';
   });
   listEl.innerHTML = html;
@@ -182,4 +266,8 @@ renderTags();
 renderCards();
 </script>
 </body>
-</html>
+</html>"""
+
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(html)
+print("Done! " + str(len(specs)) + " specs, " + str(sum(1 for s in specs if s['file'])) + " with links.")
