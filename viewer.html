@@ -37,7 +37,7 @@
 
 <script src="pdfjs/pdf.min.js"></script>
 <script>
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdfjs/pdf.worker.min.js';
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
 
 const params = new URLSearchParams(location.search);
 const fileUrl = params.get('file');
