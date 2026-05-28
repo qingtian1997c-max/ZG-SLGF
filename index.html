@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>????????</title>
+<title>水利规范文件检索</title>
 <style>
   :root {
     --bg: #f0f4f8;
@@ -27,8 +27,6 @@
     line-height: 1.6;
     min-height: 100vh;
   }
-
-  /* Header */
   header {
     background: linear-gradient(135deg, #1a56db 0%, #1a73e8 100%);
     color: #fff;
@@ -37,173 +35,50 @@
   }
   header h1 { font-size: 28px; font-weight: 600; margin-bottom: 6px; }
   header p { font-size: 14px; opacity: 0.85; }
-
-  /* Container */
   .container { max-width: 960px; margin: 0 auto; padding: 24px 20px; }
-
-  /* Search */
-  .search-wrap {
-    position: relative;
-    margin-bottom: 20px;
-  }
+  .search-wrap { position: relative; margin-bottom: 20px; }
   .search-wrap input {
-    width: 100%;
-    padding: 14px 20px 14px 52px;
-    font-size: 16px;
-    border: 2px solid var(--border);
-    border-radius: 12px;
-    background: var(--card-bg);
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    box-shadow: var(--shadow);
+    width: 100%; padding: 14px 20px 14px 52px; font-size: 16px;
+    border: 2px solid var(--border); border-radius: 12px;
+    background: var(--card-bg); outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s; box-shadow: var(--shadow);
   }
-  .search-wrap input:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(26,115,232,0.15);
-  }
-  .search-wrap .icon {
-    position: absolute;
-    left: 18px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 20px;
-    color: var(--text-secondary);
-    pointer-events: none;
-  }
-
-  /* Stats */
-  .stats {
-    font-size: 13px;
-    color: var(--text-secondary);
-    margin-bottom: 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  /* Category Tags */
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 24px;
-  }
+  .search-wrap input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.15); }
+  .search-wrap .icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); font-size: 20px; color: var(--text-secondary); pointer-events: none; }
+  .stats { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
   .tag {
-    padding: 7px 16px;
-    border-radius: 20px;
-    font-size: 14px;
-    cursor: pointer;
-    border: 1px solid var(--border);
-    background: var(--card-bg);
-    color: var(--text-secondary);
-    transition: all 0.2s;
-    user-select: none;
-    white-space: nowrap;
+    padding: 7px 16px; border-radius: 20px; font-size: 14px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--card-bg);
+    color: var(--text-secondary); transition: all 0.2s; user-select: none; white-space: nowrap;
   }
   .tag:hover { border-color: var(--primary); color: var(--primary); }
   .tag.active { background: var(--tag-active); color: var(--tag-active-text); border-color: var(--tag-active); }
   .tag .count { font-size: 11px; margin-left: 2px; opacity: 0.7; }
-
-  /* Spec Cards */
   .card-list { display: flex; flex-direction: column; gap: 12px; }
   .card {
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 20px 24px;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border);
-    transition: box-shadow 0.2s, transform 0.15s;
-    cursor: pointer;
+    background: var(--card-bg); border-radius: 12px; padding: 20px 24px;
+    box-shadow: var(--shadow); border: 1px solid var(--border);
+    transition: box-shadow 0.2s, transform 0.15s; cursor: pointer;
   }
   .card:hover { box-shadow: var(--shadow-hover); transform: translateY(-1px); }
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 12px;
-  }
-  .card-code {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--primary);
-    white-space: nowrap;
-  }
-  .card-name {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--text);
-    flex: 1;
-  }
-  .card-cat {
-    display: inline-block;
-    padding: 2px 10px;
-    border-radius: 10px;
-    font-size: 12px;
-    background: var(--primary-light);
-    color: var(--primary);
-    white-space: nowrap;
-  }
-  .card-date {
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin-top: 8px;
-  }
-
-  /* Card Actions (expandable) */
-  .card-actions {
-    display: none;
-    margin-top: 14px;
-    padding-top: 14px;
-    border-top: 1px solid var(--border);
-    gap: 10px;
-    flex-wrap: wrap;
-  }
+  .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .card-code { font-size: 15px; font-weight: 700; color: var(--primary); white-space: nowrap; }
+  .card-name { font-size: 15px; font-weight: 500; color: var(--text); flex: 1; }
+  .card-cat { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 12px; background: var(--primary-light); color: var(--primary); white-space: nowrap; }
+  .card-date { font-size: 12px; color: var(--text-secondary); margin-top: 8px; }
+  .card-actions { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); gap: 10px; flex-wrap: wrap; }
   .card.expanded .card-actions { display: flex; }
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 18px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 500;
-    text-decoration: none;
-    cursor: pointer;
-    border: 1px solid var(--border);
-    background: var(--card-bg);
-    color: var(--text);
-    transition: all 0.15s;
-  }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 500; text-decoration: none; cursor: pointer; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); transition: all 0.15s; }
   .btn:hover { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
   .btn.primary { background: var(--primary); color: #fff; border-color: var(--primary); }
   .btn.primary:hover { background: #1557b0; }
   .btn:disabled { opacity: 0.4; pointer-events: none; }
-
-  /* Expand hint */
-  .expand-hint {
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin-top: 6px;
-  }
-
-  /* No results */
-  .empty {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--text-secondary);
-  }
+  .expand-hint { font-size: 12px; color: var(--text-secondary); margin-top: 6px; }
+  .empty { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
   .empty .emoji { font-size: 48px; margin-bottom: 12px; }
   .empty p { font-size: 15px; }
-
-  /* Footer */
-  footer {
-    text-align: center;
-    padding: 32px 20px;
-    font-size: 13px;
-    color: var(--text-secondary);
-  }
-
-  /* Responsive */
+  footer { text-align: center; padding: 32px 20px; font-size: 13px; color: var(--text-secondary); }
   @media (max-width: 600px) {
     header h1 { font-size: 22px; }
     .card-header { flex-direction: column; gap: 4px; }
@@ -213,87 +88,59 @@
 </style>
 </head>
 <body>
-
 <header>
-  <h1>?? ????????</h1>
-  <p>?????????????????? ? ? 24 ?????</p>
+  <h1>水利规范文件检索</h1>
+  <p>涵盖勘测、设计、施工、数字水利等领域 · 共 24 部现行规范</p>
 </header>
-
 <div class="container">
-  <!-- Search -->
   <div class="search-wrap">
-    <span class="icon">??</span>
-    <input type="text" id="search" placeholder="????????????????????????..." autocomplete="off">
+    <span class="icon">搜索</span>
+    <input type="text" id="search" placeholder="输入关键词搜索规范，如：测量、质量验收、数字孪生..." autocomplete="off">
   </div>
-
   <div class="stats">
-    <span id="result-count">? 24 ???</span>
-    <span style="cursor:pointer;color:var(--primary)" onclick="clearAll()">? ????</span>
+    <span id="result-count">共 24 部规范</span>
+    <span style="cursor:pointer;color:var(--primary)" onclick="clearAll()">清除筛选</span>
   </div>
-
-  <!-- Category Tags -->
   <div class="tags" id="tags"></div>
-
-  <!-- Cards -->
   <div class="card-list" id="card-list"></div>
-
   <div class="empty" id="empty" style="display:none">
-    <div class="emoji">??</div>
-    <p>?????????????????</p>
+    <div class="emoji">无</div>
+    <p>没有找到匹配的规范，试试其他关键词</p>
   </div>
 </div>
-
 <footer>
-  <p>???????????? ? ?????? 2026.05</p>
+  <p>点击规范卡片展开查看详情 · 数据更新时间 2026.05</p>
 </footer>
-
 <script>
-const specs = [{"id": 1, "code": "SLT 197-2026", "name": "??????????", "date": "2026.04.07", "cat": "????", "file": "", "size": ""}, {"id": 2, "code": "SLT 290-2024", "name": "????????????????????", "date": "2025.03.31", "cat": "????", "file": "", "size": ""}, {"id": 3, "code": "SLT 386-2025", "name": "????????????????", "date": "2026.02.05", "cat": "????", "file": "", "size": ""}, {"id": 4, "code": "SLT 447-2026", "name": "??????????????????", "date": "2026.04.04", "cat": "????", "file": "", "size": ""}, {"id": 5, "code": "SLT 504-2026", "name": "??????????????????", "date": "2026.05.11", "cat": "?????", "file": "", "size": ""}, {"id": 6, "code": "SL/T 530-2026", "name": "????????????????????????", "date": "2026.04.07", "cat": "????", "file": "", "size": ""}, {"id": 7, "code": "SLT 612-2026", "name": "?????????????", "date": "2026.04.07", "cat": "????", "file": "", "size": ""}, {"id": 8, "code": "SLT 631.5-2025", "name": "?????????????????? ?5?? ??????????", "date": "2026.02.05", "cat": "????", "file": "", "size": ""}, {"id": 9, "code": "SLT 631.6-2025", "name": "?????????????????? ?6?? ?????????????????", "date": "2026.02.05", "cat": "????", "file": "", "size": ""}, {"id": 10, "code": "SLT 631.7-2025", "name": "?????????????????? ?7?? ????????", "date": "2026.02.05", "cat": "????", "file": "", "size": ""}, {"id": 11, "code": "SLT 654-2026", "name": "????????????????????", "date": "2026.04.04", "cat": "????", "file": "", "size": ""}, {"id": 12, "code": "SLT 706-2026", "name": "??????????", "date": "2026.05.11", "cat": "????", "file": "", "size": ""}, {"id": 13, "code": "SLT 851-2025", "name": "??????????", "date": "2026.02.05", "cat": "????", "file": "", "size": ""}, {"id": 14, "code": "SLT 860-2026", "name": "???????????", "date": "2026.04.04", "cat": "????", "file": "", "size": ""}, {"id": 15, "code": "SLT 861-2026", "name": "???????????????", "date": "2026.04.04", "cat": "????", "file": "", "size": ""}, {"id": 16, "code": "SLT 862-2026", "name": "?????????????", "date": "2026.04.04", "cat": "????", "file": "", "size": ""}, {"id": 17, "code": "SLT 863-2026", "name": "???????????????????", "date": "2026.04.04", "cat": "????", "file": "", "size": ""}, {"id": 18, "code": "SLT 864-2026", "name": "??????????", "date": "2026.04.04", "cat": "????", "file": "", "size": ""}, {"id": 19, "code": "SLT 865-2026", "name": "??????????????", "date": "2026.04.04", "cat": "????", "file": "", "size": ""}, {"id": 20, "code": "SLT 866-2026", "name": "?????????", "date": "2026.05.11", "cat": "???", "file": "", "size": ""}, {"id": 21, "code": "SLT 867-2026", "name": "?????????", "date": "2026.05.11", "cat": "???", "file": "", "size": ""}, {"id": 22, "code": "SLT 868-2026", "name": "???????????????", "date": "2026.05.11", "cat": "????", "file": "", "size": ""}, {"id": 23, "code": "SLT 869-2026", "name": "???????????????", "date": "2026.05.11", "cat": "??", "file": "", "size": ""}, {"id": 24, "code": "SLT 870-2026", "name": "???????????", "date": "2026.05.11", "cat": "???", "file": "", "size": ""}];
-const categories = ["????", "?????", "???", "??"];
-
+const specs = [{"id": 1, "code": "SLT 197-2026", "name": "水利水电工程测量规范", "date": "2026.4.7", "cat": "勘测测量", "file": "", "size": ""}, {"id": 2, "code": "SLT 290-2024", "name": "水利水电工程建设征地移民安置规划设计规范", "date": "2025.3.31", "cat": "规划设计", "file": "", "size": ""}, {"id": 3, "code": "SLT 386-2025", "name": "水利水电工程边坡与挡土墙设计规范", "date": "2026.2.5", "cat": "规划设计", "file": "", "size": ""}, {"id": 4, "code": "SLT 447-2026", "name": "水土保持项目前期设计文件编制技术规程", "date": "2026.4.4", "cat": "规划设计", "file": "", "size": ""}, {"id": 5, "code": "SLT 504-2026", "name": "水文设施工程前期工作技术报告编制规程", "date": "2026.05.11", "cat": "水文水资源", "file": "", "size": ""}, {"id": 6, "code": "SL/T 530-2026", "name": "水利水电工程安全监测仪器检验与安装规范(扫描版)", "date": "2026.4.7", "cat": "安全监测", "file": "", "size": ""}, {"id": 7, "code": "SLT 612-2026", "name": "水利水电工程自动化设计规范", "date": "2026.4.7", "cat": "规划设计", "file": "", "size": ""}, {"id": 8, "code": "SLT 631.5-2025", "name": "水利水电工程单元工程施工质量验收标准 第5部分 水工金属结构安装工程", "date": "2026.2.5", "cat": "施工质量", "file": "", "size": ""}, {"id": 9, "code": "SLT 631.6-2025", "name": "水利水电工程单元工程施工质量验收标准 第6部分 水轮发电机组及辅助设备系统安装工程", "date": "2026.2.5", "cat": "施工质量", "file": "", "size": ""}, {"id": 10, "code": "SLT 631.7-2025", "name": "水利水电工程单元工程施工质量验收标准 第7部分电气装置安装工程", "date": "2026.2.5", "cat": "施工质量", "file": "", "size": ""}, {"id": 11, "code": "SLT 654-2026", "name": "水利水电工程合理使用年限及耐久性设计规范", "date": "2026.4.4", "cat": "规划设计", "file": "", "size": ""}, {"id": 12, "code": "SLT 706-2026", "name": "水库调度规程编制导则", "date": "2026.05.11", "cat": "水库调度", "file": "", "size": ""}, {"id": 13, "code": "SLT 851-2025", "name": "调水工程调度管理规程", "date": "2026.2.5", "cat": "水库调度", "file": "", "size": ""}, {"id": 14, "code": "SLT 860-2026", "name": "水利无人机监测技术规范", "date": "2026.4.4", "cat": "数字水利", "file": "", "size": ""}, {"id": 15, "code": "SLT 861-2026", "name": "流域下垫面激光雷达测量技术规范", "date": "2026.4.4", "cat": "勘测测量", "file": "", "size": ""}, {"id": 16, "code": "SLT 862-2026", "name": "数字孪生水利可视化表达规范", "date": "2026.4.4", "cat": "数字水利", "file": "", "size": ""}, {"id": 17, "code": "SLT 863-2026", "name": "数字孪生水利专业模型集成与服务技术要求", "date": "2026.4.4", "cat": "数字水利", "file": "", "size": ""}, {"id": 18, "code": "SLT 864-2026", "name": "水利数据分类分级规则", "date": "2026.4.4", "cat": "数字水利", "file": "", "size": ""}, {"id": 19, "code": "SLT 865-2026", "name": "水利工程建设项目质量管理规范", "date": "2026.4.4", "cat": "施工质量", "file": "", "size": ""}, {"id": 20, "code": "SLT 866-2026", "name": "用水权交易技术标准", "date": "2026.05.11", "cat": "用水权", "file": "", "size": ""}, {"id": 21, "code": "SLT 867-2026", "name": "用水权交易数据规范", "date": "2026.05.11", "cat": "用水权", "file": "", "size": ""}, {"id": 22, "code": "SLT 868-2026", "name": "水工建筑物水下缺陷修复技术导则", "date": "2026.05.11", "cat": "维护修复", "file": "", "size": ""}, {"id": 23, "code": "SLT 869-2026", "name": "农业灌溉用水计量监测与评价导则", "date": "2026.05.11", "cat": "灌溉", "file": "", "size": ""}, {"id": 24, "code": "SLT 870-2026", "name": "小水电集控中心技术规范", "date": "2026.05.11", "cat": "小水电", "file": "", "size": ""}];
+const categories = ["勘测测量", "规划设计", "水文水资源", "安全监测", "施工质量", "水库调度", "数字水利", "用水权", "维护修复", "灌溉", "小水电"];
 let activeCat = null;
 let query = '';
-
 function renderTags() {
   const tagsEl = document.getElementById('tags');
-  let html = '<span class="tag' + (activeCat === null ? ' active' : '') + '" onclick="filterByCat(null)">??<span class="count">24</span></span>';
+  let html = '<span class="tag' + (activeCat === null ? ' active' : '') + '" onclick="filterByCat(null)">全部<span class="count">' + specs.length + '</span></span>';
   categories.forEach(cat => {
     const count = specs.filter(s => s.cat === cat).length;
-    html += '<span class="tag' + (activeCat === cat ? ' active' : '') + '" onclick="filterByCat(\'' + cat.replace(/'/g, "\'") + '\')">' + cat + '<span class="count"> ' + count + '</span></span>';
+    html += '<span class="tag' + (activeCat === cat ? ' active' : '') + '" onclick="filterByCat("' + cat + '")">' + cat + '<span class="count"> ' + count + '</span></span>';
   });
   tagsEl.innerHTML = html;
 }
-
 function filterByCat(cat) {
   activeCat = cat;
   query = document.getElementById('search').value.trim().toLowerCase();
   renderTags();
   renderCards();
 }
-
 function renderCards() {
   const listEl = document.getElementById('card-list');
   const emptyEl = document.getElementById('empty');
   const countEl = document.getElementById('result-count');
-
   let filtered = specs;
-  if (activeCat !== null) {
-    filtered = filtered.filter(s => s.cat === activeCat);
-  }
-  if (query) {
-    filtered = filtered.filter(s => s.code.toLowerCase().includes(query) || s.name.includes(query));
-  }
-
-  countEl.textContent = filtered.length === specs.length ? '? ' + specs.length + ' ???' : '?? ' + filtered.length + ' ???';
-
-  if (filtered.length === 0) {
-    listEl.innerHTML = '';
-    emptyEl.style.display = 'block';
-    return;
-  }
-
+  if (activeCat !== null) { filtered = filtered.filter(s => s.cat === activeCat); }
+  if (query) { filtered = filtered.filter(s => s.code.toLowerCase().includes(query) || s.name.includes(query)); }
+  countEl.textContent = filtered.length === specs.length ? '共 ' + specs.length + ' 部规范' : '找到 ' + filtered.length + ' 部规范';
+  if (filtered.length === 0) { listEl.innerHTML = ''; emptyEl.style.display = 'block'; return; }
   emptyEl.style.display = 'none';
-
   let html = '';
   filtered.forEach(s => {
     html += '<div class="card" id="card-' + s.id + '" onclick="toggleCard(' + s.id + ')">';
@@ -302,27 +149,24 @@ function renderCards() {
     html += '<span class="card-name">' + s.name + '</span>';
     html += '<span class="card-cat">' + s.cat + '</span>';
     html += '</div>';
-    html += '<div class="card-date">?? ?????' + s.date + '</div>';
+    html += '<div class="card-date">实施时间：' + s.date + '</div>';
     html += '<div class="card-actions">';
     if (s.file) {
-      html += '<a class="btn primary" href="' + s.file + '" target="_blank" onclick="event.stopPropagation()">??? ????</a>';
-      html += '<a class="btn" href="' + s.file + '" download onclick="event.stopPropagation()">?? ?? PDF</a>';
+      html += '<a class="btn primary" href="' + s.file + '" target="_blank" onclick="event.stopPropagation()">在线浏览</a>';
+      html += '<a class="btn" href="' + s.file + '" download onclick="event.stopPropagation()">下载 PDF</a>';
     } else {
-      html += '<span class="btn" disabled title="PDF ????">??? ??????????</span>';
-      html += '<span class="btn" disabled title="PDF ????">?? ????????</span>';
+      html += '<span class="btn" disabled title="PDF 暂未上传">在线浏览（暂未上传）</span>';
+      html += '<span class="btn" disabled title="PDF 暂未上传">下载（暂未上传）</span>';
     }
     html += '</div>';
-    html += '<div class="expand-hint">?? ????????</div>';
+    html += '<div class="expand-hint">点击展开查看详情</div>';
     html += '</div>';
   });
   listEl.innerHTML = html;
 }
-
 function toggleCard(id) {
-  const card = document.getElementById('card-' + id);
-  card.classList.toggle('expanded');
+  document.getElementById('card-' + id).classList.toggle('expanded');
 }
-
 function clearAll() {
   activeCat = null;
   document.getElementById('search').value = '';
@@ -330,16 +174,12 @@ function clearAll() {
   renderTags();
   renderCards();
 }
-
-// Init
 document.getElementById('search').addEventListener('input', function(e) {
   query = e.target.value.trim().toLowerCase();
   renderCards();
 });
-
 renderTags();
 renderCards();
 </script>
-
 </body>
 </html>
