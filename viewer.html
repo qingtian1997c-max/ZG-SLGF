@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF 在线预览</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #525659; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+  #toolbar {
+    background: #323639; color: #fff; padding: 8px 16px;
+    display: flex; align-items: center; gap: 12px; font-size: 14px;
+  }
+  #toolbar button {
+    background: #565a5e; color: #fff; border: none; padding: 6px 14px;
+    border-radius: 4px; cursor: pointer; font-size: 13px;
+  }
+  #toolbar button:hover { background: #6e7379; }
+  #toolbar span { flex: 1; text-align: center; }
+  #toolbar a { color: #8ab4f8; text-decoration: none; margin-left: auto; }
+  #canvas-wrap { overflow: auto; height: calc(100vh - 44px); text-align: center; background: #525659; }
+  canvas { display: block; margin: 16px auto; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+  #loading { color: #ccc; padding: 60px; font-size: 16px; }
+</style>
+</head>
+<body>
+<div id="toolbar">
+  <button onclick="prevPage()">上一页</button>
+  <span>第 <span id="page-num">0</span> / <span id="page-count">0</span> 页</span>
+  <button onclick="nextPage()">下一页</button>
+  <a id="download-link" href="#" download>下载 PDF</a>
+</div>
+<div id="canvas-wrap">
+  <div id="loading">正在加载 PDF...</div>
+  <canvas id="pdf-canvas"></canvas>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+const params = new URLSearchParams(location.search);
+const fileUrl = params.get('file');
+document.getElementById('download-link').href = fileUrl;
+
+let pdfDoc = null, pageNum = 1, pageRendering = false, pageNumPending = null;
+const scale = 1.5;
+const canvas = document.getElementById('pdf-canvas');
+const ctx = canvas.getContext('2d');
+
+function renderPage(num) {
+  pageRendering = true;
+  pdfDoc.getPage(num).then(page => {
+    const viewport = page.getViewport({ scale });
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+    const renderContext = { canvasContext: ctx, viewport };
+    const renderTask = page.render(renderContext);
+    renderTask.promise.then(() => {
+      pageRendering = false;
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('page-num').textContent = num;
+      if (pageNumPending !== null) { renderPage(pageNumPending); pageNumPending = null; }
+    });
+  });
+  document.getElementById('page-num').textContent = num;
+}
+
+function queueRenderPage(num) {
+  if (pageRendering) { pageNumPending = num; } else { renderPage(num); }
+}
+
+function prevPage() { if (pageNum <= 1) return; pageNum--; queueRenderPage(pageNum); }
+function nextPage() { if (pageNum >= pdfDoc.numPages) return; pageNum++; queueRenderPage(pageNum); }
+
+if (fileUrl) {
+  pdfjsLib.getDocument(fileUrl).promise.then(pdf => {
+    pdfDoc = pdf;
+    document.getElementById('page-count').textContent = pdf.numPages;
+    renderPage(pageNum);
+  }).catch(err => {
+    document.getElementById('loading').textContent = 'PDF 加载失败: ' + err.message;
+  });
+} else {
+  document.getElementById('loading').textContent = '未指定 PDF 文件';
+}
+</script>
+</body>
+</html>
