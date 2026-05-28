@@ -152,7 +152,7 @@ function renderCards() {
     html += '<div class="card-date">实施时间：' + s.date + '</div>';
     html += '<div class="card-actions">';
     if (s.file) {
-      html += '<a class="btn primary" href="https://docs.google.com/viewer?embedded=true&url=' + encodeURIComponent(s.file) + '" target="_blank" onclick="event.stopPropagation()">在线浏览</a>';
+      html += '<a class="btn primary" href="https://view.officeapps.live.com/op/view.aspx?src=' + encodeURIComponent(s.file) + '" target="_blank" onclick="event.stopPropagation()">在线浏览</a>';
       html += '<a class="btn" href="' + s.file + '" download onclick="event.stopPropagation()">下载 PDF</a>';
     } else {
       html += '<span class="btn" disabled title="PDF 暂未上传">在线浏览（暂未上传）</span>';
